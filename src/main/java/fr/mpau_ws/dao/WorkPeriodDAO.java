@@ -8,27 +8,26 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mariadb.jdbc.ClientPreparedStatement;
 
-import com.mysql.jdbc.PreparedStatement;
-
+import fr.mpau_ws.bean.WorkPeriod;
 import fr.mpau_ws.exception.TechnicalException;
-import fr.mpau_ws.model.WorkPeriod;
-import fr.mpau_ws.tools.PoolConnection;
-import fr.mpau_ws.tools.Settings;
+import fr.mpau_ws.tool.Database;
+import fr.mpau_ws.tool.Settings;
 
 /**
  * Classe DAO des workperiods
  * 
  * @author Jonathan
- * @version 1.1 (28/01/2018)
+ * @version 1.2 (22/01/2025)
  * @since 11/11/2017
  */
-
 public class WorkPeriodDAO {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(WorkPeriodDAO.class);
 
 	/**
@@ -46,17 +45,17 @@ public class WorkPeriodDAO {
 	public WorkPeriod getWorkPeriodNotCompleted(int wdID) throws TechnicalException {
 		WorkPeriod wp = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
 			logger.debug("WorkPeriodDAO -> récupération de la workperiod non-finie de la workday [" + wdID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wp.selectNotCompletedWorkPeriod"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wp.selectNotCompletedWorkPeriod"));
 			pstmt.setInt(1, wdID);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				int id = rs.getInt("wp_id");
+				int id = rs.getInt("id");
 				long start = rs.getLong("date_start");
 				long stop = rs.getLong("date_stop");
 				wp = new WorkPeriod(id, wdID, start, stop, false);
@@ -89,20 +88,20 @@ public class WorkPeriodDAO {
 	public List<WorkPeriod> getAllWorkPeriods(int wdID) throws TechnicalException {
 		List<WorkPeriod> listWp = new ArrayList<WorkPeriod>();
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
 			logger.debug("WorkPeriodDAO -> récupération de la liste des workperiods pour la workday [" + wdID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wp.selectWorkPeriods"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wp.selectWorkPeriods"));
 			pstmt.setInt(1, wdID);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
-				int id = rs.getInt("wp_id");
+				int id = rs.getInt("id");
 				long start = rs.getLong("date_start");
 				long stop = rs.getLong("date_stop");
-				boolean finished = rs.getBoolean("wp_finished");
+				boolean finished = rs.getBoolean("finished");
 				WorkPeriod wp = new WorkPeriod(id, wdID, start, stop, finished);
 				listWp.add(wp);
 			}
@@ -138,13 +137,13 @@ public class WorkPeriodDAO {
 	public WorkPeriod startWorkPeriod(long wpStart, int wdID) throws TechnicalException {
 		WorkPeriod addedWp = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		int rowExecuted = 0;
 
 		try {
 			logger.debug("WorkPeriodDAO -> ouverture d'une nouvelle workperiod pour la workday [" + wdID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wp.startWorkPeriod"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wp.startWorkPeriod"));
 			pstmt.setInt(1, wdID);
 			pstmt.setLong(2, wpStart);
 			rowExecuted = pstmt.executeUpdate();
@@ -180,13 +179,13 @@ public class WorkPeriodDAO {
 	public WorkPeriod stopWorkPeriod(long wpStop, int wpID) throws TechnicalException {
 		WorkPeriod updatedWp = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		int rowExecuted = 0;
 
 		try {
 			logger.debug("WorkPeriodDAO -> clôture de la workperiod [" + wpID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wp.finishWorkPeriod"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wp.finishWorkPeriod"));
 			pstmt.setLong(1, wpStop);
 			pstmt.setInt(2, wpID);
 			rowExecuted = pstmt.executeUpdate();
@@ -221,14 +220,14 @@ public class WorkPeriodDAO {
 	public List<WorkPeriod> deleteWorkPeriods(int wdID) throws TechnicalException {
 		List<WorkPeriod> deletedListWp = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		int rowExecuted = 0;
 
 		try {
 			logger.debug("WorkPeriodDAO -> suppression des workperiods pour la workday [" + wdID + "]");
 			List<WorkPeriod> tmpListWp = getAllWorkPeriods(wdID);
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wp.deleteWorkPeriods"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wp.deleteWorkPeriods"));
 			pstmt.setInt(1, wdID);
 			rowExecuted = pstmt.executeUpdate();
 			if (rowExecuted >= 1) {

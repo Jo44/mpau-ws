@@ -8,27 +8,26 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mariadb.jdbc.ClientPreparedStatement;
 
-import com.mysql.jdbc.PreparedStatement;
-
+import fr.mpau_ws.bean.WorkDay;
 import fr.mpau_ws.exception.TechnicalException;
-import fr.mpau_ws.model.WorkDay;
-import fr.mpau_ws.tools.PoolConnection;
-import fr.mpau_ws.tools.Settings;
+import fr.mpau_ws.tool.Database;
+import fr.mpau_ws.tool.Settings;
 
 /**
  * Classe DAO des workdays
  * 
  * @author Jonathan
- * @version 1.2 (10/02/2018)
+ * @version 1.3 (22/01/2025)
  * @since 11/11/2017
  */
-
 public class WorkDayDAO {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(WorkDayDAO.class);
 
 	/**
@@ -46,17 +45,17 @@ public class WorkDayDAO {
 	public WorkDay getWorkDayNotCompleted(int userID) throws TechnicalException {
 		WorkDay wd = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
 			logger.debug("WorkDayDAO -> récupération de la workday non-finie de l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wd.selectNotCompletedWorkDay"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wd.selectNotCompletedWorkDay"));
 			pstmt.setInt(1, userID);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				int id = rs.getInt("wd_id");
+				int id = rs.getInt("id");
 				long start = rs.getLong("date_start");
 				long stop = rs.getLong("date_stop");
 				wd = new WorkDay(id, userID, start, stop, false);
@@ -89,20 +88,20 @@ public class WorkDayDAO {
 	public List<WorkDay> getAllWorkDays(int userID) throws TechnicalException {
 		List<WorkDay> listWd = new ArrayList<>();
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
 			logger.debug("WorkDayDAO -> récupération de la liste des workdays de l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wd.selectAllWorkDays"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wd.selectAllWorkDays"));
 			pstmt.setInt(1, userID);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
-				int id = rs.getInt("wd_id");
+				int id = rs.getInt("id");
 				long start = rs.getLong("date_start");
 				long stop = rs.getLong("date_stop");
-				boolean finished = rs.getBoolean("wd_finished");
+				boolean finished = rs.getBoolean("finished");
 				WorkDay wd = new WorkDay(id, userID, start, stop, finished);
 				listWd.add(wd);
 			}
@@ -139,23 +138,23 @@ public class WorkDayDAO {
 	public List<WorkDay> getAllWorkDaysForMonth(int userID, int month, int year) throws TechnicalException {
 		List<WorkDay> listWd = new ArrayList<>();
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
 			logger.debug("WorkDayDAO -> récupération de la liste des workdays de l'utilisateur [" + userID + "] pour le mois [" + month
 					+ "] de l'année [" + year + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wd.selectAllWorkDaysForMonth"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wd.selectAllWorkDaysForMonth"));
 			pstmt.setInt(1, userID);
 			pstmt.setInt(2, month);
 			pstmt.setInt(3, year);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
-				int id = rs.getInt("wd_id");
+				int id = rs.getInt("id");
 				long start = rs.getLong("date_start");
 				long stop = rs.getLong("date_stop");
-				boolean finished = rs.getBoolean("wd_finished");
+				boolean finished = rs.getBoolean("finished");
 				WorkDay wd = new WorkDay(id, userID, start, stop, finished);
 				listWd.add(wd);
 			}
@@ -191,20 +190,20 @@ public class WorkDayDAO {
 	public WorkDay getWorkDay(int wdID, int userID) throws TechnicalException {
 		WorkDay wd = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
 			logger.debug("WorkDayDAO -> récupération de la workday [" + wdID + "] de l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wd.selectWorkDay"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wd.selectWorkDay"));
 			pstmt.setInt(1, wdID);
 			pstmt.setInt(2, userID);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				long start = rs.getLong("date_start");
 				long stop = rs.getLong("date_stop");
-				boolean finished = rs.getBoolean("wd_finished");
+				boolean finished = rs.getBoolean("finished");
 				wd = new WorkDay(wdID, userID, start, stop, finished);
 				logger.debug("WorkDayDAO => récupération: SUCCES");
 			} else {
@@ -236,13 +235,13 @@ public class WorkDayDAO {
 	public WorkDay startWorkDay(long wdStart, int userID) throws TechnicalException {
 		WorkDay addedWd = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		int rowExecuted = 0;
 
 		try {
 			logger.debug("WorkDayDAO -> ouverture d'une nouvelle workday pour l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wd.startWorkDay"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wd.startWorkDay"));
 			pstmt.setInt(1, userID);
 			pstmt.setLong(2, wdStart);
 			rowExecuted = pstmt.executeUpdate();
@@ -278,13 +277,13 @@ public class WorkDayDAO {
 	public WorkDay stopWorkDay(long wdStop, int wdID) throws TechnicalException {
 		WorkDay updatedWd = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		int rowExecuted = 0;
 
 		try {
 			logger.debug("WorkDayDAO -> clôture de la workday [" + wdID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wd.finishWorkDay"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wd.finishWorkDay"));
 			pstmt.setLong(1, wdStop);
 			pstmt.setInt(2, wdID);
 			rowExecuted = pstmt.executeUpdate();
@@ -320,14 +319,14 @@ public class WorkDayDAO {
 	public WorkDay deleteWorkDay(int wdID, int userID) throws TechnicalException {
 		WorkDay deletedWd = null;
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		ClientPreparedStatement pstmt = null;
 		int rowExecuted = 0;
 
 		try {
 			logger.debug("WorkDayDAO -> suppression de la workday [" + wdID + "] de l'utilisateur [" + userID + "]");
 			WorkDay tmpWd = getWorkDay(wdID, userID);
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("wd.deleteWorkDay"));
+			con = Database.getInstance().getConnection();
+			pstmt = (ClientPreparedStatement) con.prepareStatement(Settings.getStringProperty("wd.deleteWorkDay"));
 			pstmt.setInt(1, wdID);
 			pstmt.setInt(2, userID);
 			rowExecuted = pstmt.executeUpdate();

@@ -4,35 +4,34 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.ErrorCodes;
+import fr.mpau_ws.bean.RequestTimestamp;
+import fr.mpau_ws.bean.Timer;
+import fr.mpau_ws.bean.TimerMode;
+import fr.mpau_ws.bean.User;
+import fr.mpau_ws.bean.WorkDay;
+import fr.mpau_ws.bean.WorkPeriod;
 import fr.mpau_ws.dao.WorkDayDAO;
 import fr.mpau_ws.dao.WorkPeriodDAO;
 import fr.mpau_ws.exception.TechnicalException;
-import fr.mpau_ws.model.ErrorCodes;
-import fr.mpau_ws.model.RequestTimestamp;
-import fr.mpau_ws.model.Timer;
-import fr.mpau_ws.model.TimerMode;
-import fr.mpau_ws.model.User;
-import fr.mpau_ws.model.WorkDay;
-import fr.mpau_ws.model.WorkPeriod;
+import jakarta.ws.rs.WebApplicationException;
 
 /**
  * Classe de controleurs des timers [Timer = ID + Workday + List<Workperiod>]
  * 
  * @author Jonathan
- * @version 1.6 (14/02/2018)
+ * @version 1.7 (22/01/2025)
  * @since 11/11/2017
  */
-
 public class TimerController {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(TimerController.class);
 	private UserController userCtrl = new UserController();
 	private WorkDayDAO wdDAO = new WorkDayDAO();
@@ -106,14 +105,14 @@ public class TimerController {
 		// si non clôturée -> Mode PAUSE + récupère le timestamp de début de la Workperiod
 		// si clôturée -> Mode RESTART + récupère le timestamp de fin de la Workperiod
 		if (timer != null) {
-			if (timer.getTimerWorkperiodsList() != null && timer.getTimerWorkperiodsList().size() > 0) {
-				List<WorkPeriod> listWp = timer.getTimerWorkperiodsList();
-				if (!listWp.get(listWp.size() - 1).isWpFinished()) {
+			if (timer.getWorkperiodsList() != null && timer.getWorkperiodsList().size() > 0) {
+				List<WorkPeriod> listWp = timer.getWorkperiodsList();
+				if (!listWp.get(listWp.size() - 1).isFinished()) {
 					mode = "PAUSE";
-					lastTimestamp = listWp.get(listWp.size() - 1).getWpStart();
+					lastTimestamp = listWp.get(listWp.size() - 1).getStartWp();
 				} else {
 					mode = "RESTART";
-					lastTimestamp = listWp.get(listWp.size() - 1).getWpStop();
+					lastTimestamp = listWp.get(listWp.size() - 1).getStopWp();
 				}
 			}
 		} else {
@@ -137,7 +136,7 @@ public class TimerController {
 		try {
 			WorkDay wd = wdDAO.getWorkDayNotCompleted(user.getId());
 			if (wd != null) {
-				List<WorkPeriod> listWp = wpDAO.getAllWorkPeriods(wd.getWdId());
+				List<WorkPeriod> listWp = wpDAO.getAllWorkPeriods(wd.getId());
 				lastTimer = new Timer(0, wd, listWp);
 			}
 		} catch (TechnicalException tex) {
@@ -166,7 +165,7 @@ public class TimerController {
 				listTimer = new ArrayList<Timer>();
 				int increment = 0;
 				for (WorkDay workDay : listWorkDays) {
-					listWorkPeriods = wpDAO.getAllWorkPeriods(workDay.getWdId());
+					listWorkPeriods = wpDAO.getAllWorkPeriods(workDay.getId());
 					Timer timer = new Timer(increment++, workDay, listWorkPeriods);
 					listTimer.add(timer);
 				}
@@ -204,7 +203,7 @@ public class TimerController {
 				listTimer = new ArrayList<Timer>();
 				int increment = 0;
 				for (WorkDay workDay : listWorkDays) {
-					listWorkPeriods = wpDAO.getAllWorkPeriods(workDay.getWdId());
+					listWorkPeriods = wpDAO.getAllWorkPeriods(workDay.getId());
 					Timer timer = new Timer(increment++, workDay, listWorkPeriods);
 					listTimer.add(timer);
 				}
@@ -235,8 +234,8 @@ public class TimerController {
 				wdDAO.startWorkDay(rqTimestamp.getTimestamp(), user.getId());
 				wd = wdDAO.getWorkDayNotCompleted(user.getId());
 				if (wd != null) {
-					wpDAO.startWorkPeriod(rqTimestamp.getTimestamp(), wd.getWdId());
-					WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getWdId());
+					wpDAO.startWorkPeriod(rqTimestamp.getTimestamp(), wd.getId());
+					WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getId());
 					List<WorkPeriod> listWp = new ArrayList<>();
 					listWp.add(wp);
 					addedTimer = new Timer(0, wd, listWp);
@@ -265,11 +264,11 @@ public class TimerController {
 		try {
 			WorkDay wd = wdDAO.getWorkDayNotCompleted(user.getId());
 			if (wd != null) {
-				WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getWdId());
+				WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getId());
 				if (wp != null) {
-					wpDAO.stopWorkPeriod(rqTimestamp.getTimestamp(), wp.getWpId());
+					wpDAO.stopWorkPeriod(rqTimestamp.getTimestamp(), wp.getId());
 					// Met à jour de la workperiod pour retour
-					wp = new WorkPeriod(wp.getWpId(), wp.getWpWdId(), wp.getWpStart(), rqTimestamp.getTimestamp(), true);
+					wp = new WorkPeriod(wp.getId(), wp.getWpWdId(), wp.getStartWp(), rqTimestamp.getTimestamp(), true);
 					List<WorkPeriod> listWp = new ArrayList<>();
 					listWp.add(wp);
 					pausedTimer = new Timer(0, wd, listWp);
@@ -298,10 +297,10 @@ public class TimerController {
 		try {
 			WorkDay wd = wdDAO.getWorkDayNotCompleted(user.getId());
 			if (wd != null) {
-				WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getWdId());
+				WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getId());
 				if (wp == null) {
-					wpDAO.startWorkPeriod(rqTimestamp.getTimestamp(), wd.getWdId());
-					wp = wpDAO.getWorkPeriodNotCompleted(wd.getWdId());
+					wpDAO.startWorkPeriod(rqTimestamp.getTimestamp(), wd.getId());
+					wp = wpDAO.getWorkPeriodNotCompleted(wd.getId());
 					List<WorkPeriod> listWp = new ArrayList<>();
 					listWp.add(wp);
 					restartedTimer = new Timer(0, wd, listWp);
@@ -332,17 +331,17 @@ public class TimerController {
 			WorkDay wd = wdDAO.getWorkDayNotCompleted(user.getId());
 			if (wd != null) {
 				List<WorkPeriod> listWp = null;
-				WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getWdId());
+				WorkPeriod wp = wpDAO.getWorkPeriodNotCompleted(wd.getId());
 				if (wp != null) {
-					wpDAO.stopWorkPeriod(rqTimestamp.getTimestamp(), wp.getWpId());
+					wpDAO.stopWorkPeriod(rqTimestamp.getTimestamp(), wp.getId());
 					// Met à jour de la workperiod pour retour
-					wp = new WorkPeriod(wp.getWpId(), wp.getWpWdId(), wp.getWpStart(), rqTimestamp.getTimestamp(), true);
+					wp = new WorkPeriod(wp.getId(), wp.getWpWdId(), wp.getStartWp(), rqTimestamp.getTimestamp(), true);
 					listWp = new ArrayList<>();
 					listWp.add(wp);
 				}
-				wdDAO.stopWorkDay(rqTimestamp.getTimestamp(), wd.getWdId());
+				wdDAO.stopWorkDay(rqTimestamp.getTimestamp(), wd.getId());
 				// Met à jour de la workday pour retour
-				wd = new WorkDay(wd.getWdId(), wd.getWdUserId(), wd.getWdStart(), rqTimestamp.getTimestamp(), true);
+				wd = new WorkDay(wd.getId(), wd.getUserWd(), wd.getStartWd(), rqTimestamp.getTimestamp(), true);
 				stopedTimer = new Timer(0, wd, listWp);
 			}
 		} catch (TechnicalException tex) {
@@ -378,8 +377,9 @@ public class TimerController {
 	}
 
 	/**
-	 * Setter
+	 * Setters
 	 */
+
 	public void setUserController(UserController userCtrl) {
 		this.userCtrl = userCtrl;
 	}

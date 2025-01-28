@@ -2,31 +2,30 @@ package fr.mpau_ws.controler;
 
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.ErrorCodes;
+import fr.mpau_ws.bean.Intervention;
+import fr.mpau_ws.bean.User;
 import fr.mpau_ws.dao.InterventionDAO;
 import fr.mpau_ws.exception.FonctionnalException;
 import fr.mpau_ws.exception.TechnicalException;
-import fr.mpau_ws.model.ErrorCodes;
-import fr.mpau_ws.model.Intervention;
-import fr.mpau_ws.model.User;
+import jakarta.ws.rs.WebApplicationException;
 
 /**
  * Classe de controleurs des interventions
  * 
  * @author Jonathan
- * @version 1.5 (14/02/2018)
+ * @version 1.6 (22/01/2025)
  * @since 11/11/2017
  */
-
 public class InterventionController {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(InterventionController.class);
 	private UserController userCtrl = new UserController();
 	private InterventionDAO interDAO = new InterventionDAO();
@@ -72,22 +71,22 @@ public class InterventionController {
 	public void controlIntervention(Intervention inter) {
 		boolean validInter = true;
 		if (inter != null) {
-			if (inter.getInterDate() == 0) {
+			if (inter.getDateInter() == 0) {
 				validInter = false;
 			}
-			if (inter.getInterDuree() < 1) {
+			if (inter.getDuree() < 1) {
 				validInter = false;
 			}
-			if (inter.getInterSecteur() == null || inter.getInterSecteur().trim().isEmpty()) {
+			if (inter.getSecteur() == null || inter.getSecteur().trim().isEmpty()) {
 				validInter = false;
 			}
-			if (inter.getInterTypeId() < 1 || inter.getInterTypeId() > 2) {
+			if (inter.getMainTypeId() < 1 || inter.getMainTypeId() > 2) {
 				validInter = false;
 			}
-			if (inter.getInterSoustypeId() < 1 || inter.getInterSoustypeId() > 8) {
+			if (inter.getSousTypeId() < 1 || inter.getSousTypeId() > 8) {
 				validInter = false;
 			}
-			if (inter.getInterAgepatientId() < 1 || inter.getInterAgepatientId() > 11) {
+			if (inter.getAgePatientId() < 1 || inter.getAgePatientId() > 11) {
 				validInter = false;
 			}
 		} else {
@@ -224,8 +223,9 @@ public class InterventionController {
 	}
 
 	/**
-	 * Setter
+	 * Setters
 	 */
+
 	public void setUserController(UserController userCtrl) {
 		this.userCtrl = userCtrl;
 	}

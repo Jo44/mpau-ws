@@ -10,25 +10,25 @@ import java.util.Calendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.User;
 import fr.mpau_ws.exception.FonctionnalException;
 import fr.mpau_ws.exception.TechnicalException;
-import fr.mpau_ws.model.User;
-import fr.mpau_ws.tools.PoolConnection;
-import fr.mpau_ws.tools.Settings;
+import fr.mpau_ws.tool.Database;
+import fr.mpau_ws.tool.Settings;
 
 /**
  * Classe DAO des utilisateurs
  * 
  * @author Jonathan
- * @version 1.1 (31/01/2018)
+ * @version 1.2 (22/01/2025)
  * @since 11/11/2017
  */
-
 public class UserDAO {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(UserDAO.class);
 
 	/**
@@ -51,18 +51,18 @@ public class UserDAO {
 		ResultSet rs = null;
 
 		try {
-			con = PoolConnection.getConnection();
-			pstmt = con.prepareStatement(Settings.getProperty("user.selectUser"));
+			con = Database.getInstance().getConnection();
+			pstmt = con.prepareStatement(Settings.getStringProperty("user.selectUser"));
 			pstmt.setString(1, username);
 			pstmt.setString(2, password);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				int id = rs.getInt("user_id");
-				String name = rs.getString("user_name");
-				String pass = rs.getString("user_pass");
-				String email = rs.getString("user_email");
-				int nbTotalInter = rs.getInt("user_nb_inter");
-				int interIdMax = rs.getInt("user_inter_id_max");
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				String pass = rs.getString("pass");
+				String email = rs.getString("email");
+				int nbTotalInter = rs.getInt("nb_inter");
+				int interIdMax = rs.getInt("inter_id_max");
 				long inscriptionDate = rs.getLong("date");
 				user = new User(id, name, pass, email, nbTotalInter, interIdMax, inscriptionDate);
 			}
@@ -100,8 +100,8 @@ public class UserDAO {
 		try {
 			logger.debug("UserDAO -> ajout d'un nouvel utilisateur");
 			Calendar now = Calendar.getInstance();
-			con = PoolConnection.getConnection();
-			pstmt = con.prepareStatement(Settings.getProperty("user.insertUser"));
+			con = Database.getInstance().getConnection();
+			pstmt = con.prepareStatement(Settings.getStringProperty("user.insertUser"));
 			pstmt.setString(1, user.getName().trim());
 			pstmt.setString(2, user.getPass().trim());
 			pstmt.setString(3, user.getEmail().trim());
@@ -148,15 +148,15 @@ public class UserDAO {
 
 		try {
 			logger.debug("UserDAO -> mise à jour de l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = con.prepareStatement(Settings.getProperty("user.updateUser"));
+			con = Database.getInstance().getConnection();
+			pstmt = con.prepareStatement(Settings.getStringProperty("user.updateUser"));
 			pstmt.setString(1, user.getPass().trim());
 			pstmt.setString(2, user.getEmail().trim());
 			pstmt.setInt(3, userID);
 			rowExecuted = pstmt.executeUpdate();
 			if (rowExecuted == 1) {
-				updatedUser = new User(userID, user.getName(), user.getPass().trim(), user.getEmail().trim(), user.getNbTotalInter(),
-						user.getInterIdMax(), user.getInscriptionDate());
+				updatedUser = new User(userID, user.getName(), user.getPass().trim(), user.getEmail().trim(), user.getNbInter(), user.getInterIdMax(),
+						user.getInscriptionDate());
 				logger.debug("UserDAO => mise à jour: SUCCES");
 			} else {
 				logger.debug("UserDAO => mise à jour: ECHEC");
@@ -193,8 +193,8 @@ public class UserDAO {
 
 		try {
 			logger.debug("UserDAO -> met à jour le nombre total d'interventions et l'ID Max d'intervention de l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("user.updateUserInter"));
+			con = Database.getInstance().getConnection();
+			pstmt = (PreparedStatement) con.prepareStatement(Settings.getStringProperty("user.updateUserInter"));
 			pstmt.setInt(1, userID);
 			pstmt.setInt(2, userID);
 			pstmt.setInt(3, userID);

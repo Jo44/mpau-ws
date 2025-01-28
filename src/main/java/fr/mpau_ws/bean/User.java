@@ -1,29 +1,23 @@
-package fr.mpau_ws.model;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+package fr.mpau_ws.bean;
 
 /**
  * Classe modèle des utilisateurs
  * 
  * @author Jonathan
- * @version 1.1 (28/01/2018)
+ * @version 1.2 (22/01/2025)
  * @since 11/11/2017
  */
-
-@XmlRootElement(name = "user")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class User {
 
 	/**
 	 * Attributs
 	 */
+
 	private int id;
 	private String name;
 	private String pass;
 	private String email;
-	private int nbTotalInter;
+	private int nbInter;
 	private int interIdMax;
 	private long inscriptionDate;
 
@@ -32,12 +26,12 @@ public class User {
 	 */
 	public User() {}
 
-	public User(int id, String name, String pass, String email, int nbTotalInter, int interIdMax, long inscriptionDate) {
+	public User(int id, String name, String pass, String email, int nbInter, int interIdMax, long inscriptionDate) {
 		this.id = id;
 		this.name = name;
 		this.pass = pass;
 		this.email = email;
-		this.nbTotalInter = nbTotalInter;
+		this.nbInter = nbInter;
 		this.interIdMax = interIdMax;
 		this.inscriptionDate = inscriptionDate;
 	}
@@ -50,8 +44,9 @@ public class User {
 	}
 
 	/**
-	 * Getters / Setters
+	 * Getters
 	 */
+
 	public int getId() {
 		return id;
 	}
@@ -68,8 +63,8 @@ public class User {
 		return email;
 	}
 
-	public int getNbTotalInter() {
-		return nbTotalInter;
+	public int getNbInter() {
+		return nbInter;
 	}
 
 	public int getInterIdMax() {

@@ -5,89 +5,169 @@
 	<groupId>fr</groupId>
 	<artifactId>MPAU-WS</artifactId>
 	<packaging>war</packaging>
-	<version>1.3</version>
+	<version>1.4</version>
 	<name>MPAU-WS</name>
+    <properties>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <maven.compiler.source>21</maven.compiler.source>
+	    <maven.compiler.target>21</maven.compiler.target>
+	    <jersey.version>3.1.10</jersey.version>
+	    <hk2.version>3.1.1</hk2.version>
+	    <jackson.version>2.18.2</jackson.version>
+    </properties>
 	<!-- Dependencies -->
 	<dependencies>
-		<!-- JAVAX -->
-		<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
+		<!-- Jakarta Servlet -->
+        <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+		<!-- Jersey Core Common -->        
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common -->
 		<dependency>
-    		<groupId>javax.ws.rs</groupId>
-    		<artifactId>jsr311-api</artifactId>
-    		<version>1.1.1</version>
+		    <groupId>org.glassfish.jersey.core</groupId>
+		    <artifactId>jersey-common</artifactId>
+		    <version>${jersey.version}</version>
 		</dependency>
-		<!-- Jersey Core -->
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-core -->
+		<!-- Jersey Core Server -->
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server -->
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-core</artifactId>
-			<version>1.19.4</version>
+		    <groupId>org.glassfish.jersey.core</groupId>
+		    <artifactId>jersey-server</artifactId>
+		    <version>${jersey.version}</version>
 		</dependency>
-		<!-- Jersey Server -->
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
+		<!-- Jersey Container Servlet -->
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-servlet -->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <!-- Jersey Media JSON Jackson -->
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <!-- Jersey Inject HK2 -->
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.inject/jersey-hk2 -->
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>1.19.4</version>
+		    <groupId>org.glassfish.jersey.inject</groupId>
+		    <artifactId>jersey-hk2</artifactId>
+		    <version>${jersey.version}</version>
 		</dependency>
-		<!-- Jersey Bundle -->
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-bundle -->
+        <!-- HK2 API Module -->
+        <!-- https://mvnrepository.com/artifact/org.glassfish.hk2/hk2-api -->
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-bundle</artifactId>
-			<version>1.19.4</version>
+		    <groupId>org.glassfish.hk2</groupId>
+		    <artifactId>hk2-api</artifactId>
+		    <version>${hk2.version}</version>
 		</dependency>
-		<!-- Data Mapper For Jackson -->
-		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
+		<!-- ServiceLocator Default Implementation -->
+		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2/hk2-locator -->
 		<dependency>
-		    <groupId>org.codehaus.jackson</groupId>
-		    <artifactId>jackson-mapper-asl</artifactId>
-		    <version>1.9.13</version>
+		    <groupId>org.glassfish.hk2</groupId>
+		    <artifactId>hk2-locator</artifactId>
+		    <version>${hk2.version}</version>
 		</dependency>
+		<!-- HK2 Implementation Utilities -->
+		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2/hk2-utils -->
+		<dependency>
+		    <groupId>org.glassfish.hk2</groupId>
+		    <artifactId>hk2-utils</artifactId>
+		    <version>${hk2.version}</version>
+		</dependency>
+        <!-- Jackson Databind -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- Jackson Datatype: JSR310 -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 		<!-- Apache Commons Validator -->
 		<!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
 		<dependency>
-    		<groupId>commons-validator</groupId>
-    		<artifactId>commons-validator</artifactId>
-    		<version>1.6</version>
+		    <groupId>commons-validator</groupId>
+		    <artifactId>commons-validator</artifactId>
+		    <version>1.9.0</version>
 		</dependency>
-		<!-- MySQL Connector/J -->
-		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<!-- MariaDB -->
+		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.44</version>
-		</dependency>
-		<!-- JUnit -->
-		<!-- https://mvnrepository.com/artifact/junit/junit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- Mockito -->
-		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
-		<dependency>
-    		<groupId>org.mockito</groupId>
-    		<artifactId>mockito-all</artifactId>
-    		<version>1.10.19</version>
-    		<scope>test</scope>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    <artifactId>mariadb-java-client</artifactId>
+		    <version>3.5.1</version>
 		</dependency>
 		<!-- Apache Log4j Core -->
 		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.9.1</version>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.24.3</version>
 		</dependency>
 		<!-- Apache Log4j API -->
 		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.9.1</version>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    <version>2.24.3</version>
 		</dependency>
+		<!-- Apache Log4j SLF4J 2.0 Binding -->
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-slf4j2-impl</artifactId>
+		    <version>2.24.3</version>
+		</dependency>
+		<!-- SLF4J API Module -->
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>2.0.16</version>
+		</dependency>
+		<!-- Mockito -->
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <version>5.15.2</version>
+		    <scope>test</scope>
+		</dependency>
+		<!-- Mockito JUnit Jupiter -->
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-junit-jupiter</artifactId>
+		    <version>5.15.2</version>
+		    <scope>test</scope>
+		</dependency>
+		<!-- JUnit Jupiter -->
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+		<dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-api</artifactId>
+		    <version>5.11.4</version>
+		    <scope>test</scope>
+		</dependency>
+		<!-- Maven Surefire Plugin -->
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+		<dependency>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-surefire-plugin</artifactId>
+		    <version>3.5.2</version>
+		</dependency>	
 	</dependencies>
 	<!-- Build -->
 	<build>
@@ -96,10 +176,23 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.13.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>21</source>
+					<target>21</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.4.0</version>
+				<configuration>
+					<webappDirectory>src/main/webapp</webappDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

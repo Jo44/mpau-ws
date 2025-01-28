@@ -2,39 +2,38 @@ package fr.mpau_ws.service;
 
 import java.util.List;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.RequestTimestamp;
+import fr.mpau_ws.bean.Timer;
+import fr.mpau_ws.bean.TimerMode;
 import fr.mpau_ws.controler.TimerController;
 import fr.mpau_ws.controler.UserController;
-import fr.mpau_ws.model.RequestTimestamp;
-import fr.mpau_ws.model.Timer;
-import fr.mpau_ws.model.TimerMode;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Classe service des timers [Timer = ID + Workday + List<Workperiod>]
  * 
  * @author Jonathan
- * @version 1.6 (14/02/2018)
+ * @version 1.7 (22/01/2025)
  * @since 11/11/2017
  */
-
 @Path("/timer")
 public class TimerService {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(TimerService.class);
 	private TimerController timerCtrl = new TimerController();
 	private UserController userCtrl = new UserController();

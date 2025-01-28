@@ -4,31 +4,30 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.WebApplicationException;
-
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.ErrorCodes;
+import fr.mpau_ws.bean.User;
 import fr.mpau_ws.dao.UserDAO;
 import fr.mpau_ws.exception.FonctionnalException;
 import fr.mpau_ws.exception.TechnicalException;
-import fr.mpau_ws.model.ErrorCodes;
-import fr.mpau_ws.model.User;
+import jakarta.ws.rs.WebApplicationException;
 
 /**
  * Classe de controleurs des utilisateurs
  * 
  * @author Jonathan
- * @version 1.3 (14/02/2018)
+ * @version 1.4 (22/01/2025)
  * @since 11/11/2017
  */
-
 public class UserController {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(UserController.class);
 	private static Map<String, User> listUsers = new HashMap<String, User>();
 	private UserDAO userDAO = new UserDAO();
@@ -258,6 +257,7 @@ public class UserController {
 	/**
 	 * Setter
 	 */
+
 	public void setUserDAO(UserDAO userDAO) {
 		this.userDAO = userDAO;
 	}

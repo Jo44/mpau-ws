@@ -10,25 +10,25 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.Intervention;
 import fr.mpau_ws.exception.FonctionnalException;
 import fr.mpau_ws.exception.TechnicalException;
-import fr.mpau_ws.model.Intervention;
-import fr.mpau_ws.tools.PoolConnection;
-import fr.mpau_ws.tools.Settings;
+import fr.mpau_ws.tool.Database;
+import fr.mpau_ws.tool.Settings;
 
 /**
  * Classe DAO des interventions
  * 
  * @author Jonathan
- * @version 1.3 (31/01/2018)
+ * @version 1.4 (22/01/2025)
  * @since 11/11/2017
  */
-
 public class InterventionDAO {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(InterventionDAO.class);
 
 	/**
@@ -56,30 +56,30 @@ public class InterventionDAO {
 		// Récupère la requête SQL et log en fonction du boolean next
 		String selectInterventions = null;
 		if (next) {
-			selectInterventions = Settings.getProperty("inter.selectNextInterventions");
+			selectInterventions = Settings.getStringProperty("inter.selectNextInterventions");
 			logger.debug("InterventionDAO -> récupération de " + nb_inter + " interventions suivant l'intervention [" + inter_id
 					+ "] pour l'utilisateur [" + user_id + "]");
 		} else {
-			selectInterventions = Settings.getProperty("inter.selectPreviousInterventions");
+			selectInterventions = Settings.getStringProperty("inter.selectPreviousInterventions");
 			logger.debug("InterventionDAO -> récupération de " + nb_inter + " interventions précédent l'intervention [" + inter_id
 					+ "] pour l'utilisateur [" + user_id + "]");
 		}
 		try {
-			con = PoolConnection.getConnection();
+			con = Database.getInstance().getConnection();
 			pstmt = (PreparedStatement) con.prepareStatement(selectInterventions);
 			pstmt.setInt(1, user_id);
 			pstmt.setInt(2, inter_id);
 			pstmt.setInt(3, nb_inter);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
-				int id = rs.getInt("inter_id");
+				int id = rs.getInt("id");
 				long date = rs.getLong("date");
-				int duree = rs.getInt("inter_duree");
-				String secteur = rs.getString("inter_secteur");
-				boolean smur = rs.getBoolean("inter_smur");
-				int type = rs.getInt("inter_type_id");
-				int sousType = rs.getInt("inter_soustype_id");
-				int agePatient = rs.getInt("inter_agepatient_id");
+				int duree = rs.getInt("duree");
+				String secteur = rs.getString("secteur");
+				boolean smur = rs.getBoolean("smur");
+				int type = rs.getInt("maintype_id");
+				int sousType = rs.getInt("soustype_id");
+				int agePatient = rs.getInt("agepatient_id");
 				String commentaire = rs.getString("commentaire");
 				Intervention intervention = new Intervention(id, user_id, date, duree, secteur, smur, type, sousType, agePatient, commentaire);
 				listInter.add(intervention);
@@ -123,19 +123,19 @@ public class InterventionDAO {
 
 		try {
 			logger.debug("InterventionDAO -> récupération de l'intervention [" + interID + "] pour l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("inter.selectIntervention"));
+			con = Database.getInstance().getConnection();
+			pstmt = (PreparedStatement) con.prepareStatement(Settings.getStringProperty("inter.selectIntervention"));
 			pstmt.setInt(1, interID);
 			pstmt.setInt(2, userID);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				long date = rs.getLong("date");
-				int duree = rs.getInt("inter_duree");
-				String secteur = rs.getString("inter_secteur");
-				boolean smur = rs.getBoolean("inter_smur");
-				int type = rs.getInt("inter_type_id");
-				int sousType = rs.getInt("inter_soustype_id");
-				int agePatient = rs.getInt("inter_agepatient_id");
+				int duree = rs.getInt("duree");
+				String secteur = rs.getString("secteur");
+				boolean smur = rs.getBoolean("smur");
+				int type = rs.getInt("maintype_id");
+				int sousType = rs.getInt("soustype_id");
+				int agePatient = rs.getInt("agepatient_id");
 				String commentaire = rs.getString("commentaire");
 				intervention = new Intervention(interID, userID, date, duree, secteur, smur, type, sousType, agePatient, commentaire);
 				logger.debug("InterventionDAO => récupération: SUCCES");
@@ -176,19 +176,19 @@ public class InterventionDAO {
 
 		try {
 			logger.debug("InterventionDAO -> ajout d'une intervention pour l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("inter.insertIntervention"));
+			con = Database.getInstance().getConnection();
+			pstmt = (PreparedStatement) con.prepareStatement(Settings.getStringProperty("inter.insertIntervention"));
 			pstmt.setInt(1, userID);
 			pstmt.setInt(2, userID);
-			pstmt.setLong(3, inter.getInterDate());
-			pstmt.setInt(4, inter.getInterDuree());
-			pstmt.setString(5, inter.getInterSecteur().trim());
-			pstmt.setBoolean(6, inter.getInterSmur());
-			pstmt.setInt(7, inter.getInterTypeId());
-			pstmt.setInt(8, inter.getInterSoustypeId());
-			pstmt.setInt(9, inter.getInterAgepatientId());
-			if (inter.getInterCommentaire() != null) {
-				pstmt.setString(10, inter.getInterCommentaire().trim());
+			pstmt.setLong(3, inter.getDateInter());
+			pstmt.setInt(4, inter.getDuree());
+			pstmt.setString(5, inter.getSecteur().trim());
+			pstmt.setBoolean(6, inter.isSmur());
+			pstmt.setInt(7, inter.getMainTypeId());
+			pstmt.setInt(8, inter.getSousTypeId());
+			pstmt.setInt(9, inter.getAgePatientId());
+			if (inter.getCommentaire() != null) {
+				pstmt.setString(10, inter.getCommentaire().trim());
 			} else {
 				pstmt.setString(10, null);
 			}
@@ -235,17 +235,17 @@ public class InterventionDAO {
 
 		try {
 			logger.debug("InterventionDAO -> mise à jour de l'intervention [" + interID + "] pour l'utilisateur [" + userID + "]");
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("inter.updateIntervention"));
-			pstmt.setLong(1, inter.getInterDate());
-			pstmt.setInt(2, inter.getInterDuree());
-			pstmt.setString(3, inter.getInterSecteur().trim());
-			pstmt.setBoolean(4, inter.getInterSmur());
-			pstmt.setInt(5, inter.getInterTypeId());
-			pstmt.setInt(6, inter.getInterSoustypeId());
-			pstmt.setInt(7, inter.getInterAgepatientId());
-			if (inter.getInterCommentaire() != null) {
-				pstmt.setString(8, inter.getInterCommentaire().trim());
+			con = Database.getInstance().getConnection();
+			pstmt = (PreparedStatement) con.prepareStatement(Settings.getStringProperty("inter.updateIntervention"));
+			pstmt.setLong(1, inter.getDateInter());
+			pstmt.setInt(2, inter.getDuree());
+			pstmt.setString(3, inter.getSecteur().trim());
+			pstmt.setBoolean(4, inter.isSmur());
+			pstmt.setInt(5, inter.getMainTypeId());
+			pstmt.setInt(6, inter.getSousTypeId());
+			pstmt.setInt(7, inter.getAgePatientId());
+			if (inter.getCommentaire() != null) {
+				pstmt.setString(8, inter.getCommentaire().trim());
 			} else {
 				pstmt.setString(8, null);
 			}
@@ -253,9 +253,8 @@ public class InterventionDAO {
 			pstmt.setInt(10, userID);
 			rowExecuted = pstmt.executeUpdate();
 			if (rowExecuted == 1) {
-				updatedInter = new Intervention(interID, userID, inter.getInterDate(), inter.getInterDuree(), inter.getInterSecteur(),
-						inter.getInterSmur(), inter.getInterTypeId(), inter.getInterSoustypeId(), inter.getInterAgepatientId(),
-						inter.getInterCommentaire());
+				updatedInter = new Intervention(interID, userID, inter.getDateInter(), inter.getDuree(), inter.getSecteur(), inter.isSmur(),
+						inter.getMainTypeId(), inter.getSousTypeId(), inter.getAgePatientId(), inter.getCommentaire());
 				logger.debug("InterventionDAO => mise à jour: SUCCES");
 			} else {
 				logger.debug("InterventionDAO => mise à jour: ECHEC");
@@ -294,8 +293,8 @@ public class InterventionDAO {
 		try {
 			logger.debug("InterventionDAO -> suppression de l'intervention [" + interID + "] pour l'utilisateur [" + userID + "]");
 			Intervention tmpInter = getIntervention(interID, userID);
-			con = PoolConnection.getConnection();
-			pstmt = (PreparedStatement) con.prepareStatement(Settings.getProperty("inter.deleteIntervention"));
+			con = Database.getInstance().getConnection();
+			pstmt = (PreparedStatement) con.prepareStatement(Settings.getStringProperty("inter.deleteIntervention"));
 			pstmt.setInt(1, interID);
 			pstmt.setInt(2, userID);
 			rowExecuted = pstmt.executeUpdate();

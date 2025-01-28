@@ -1,0 +1,21 @@
+# Eclipse
+.classpath
+.project
+.settings
+how-to-deploy.readme
+
+# Compile
+target/*
+/target/
+/WebContent
+
+# SQL
+src/main/resources/sql/
+*.sql
+
+# Properties
+*.properties
+
+# INF
+src/main/webapp/META-INF/
+src/main/webapp/WEB-INF/

@@ -1,26 +1,24 @@
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
-          http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-    version="3.0">
- 
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
     <display-name>MPAU-WS</display-name>
-    
     <welcome-file-list>
     	<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
- 
     <servlet>
-        <servlet-name>jerseyServlet</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <servlet-name>Jersey Web Application</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>fr.mpau_ws</param-value>
+        	<param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>fr.mpau_ws.service</param-value>
         </init-param>
-        <load-on-startup>1</load-on-startup> 
+        <load-on-startup>1</load-on-startup>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>jerseyServlet</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
-    </servlet-mapping>
+        <servlet-name>Jersey Web Application</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
 </web-app>

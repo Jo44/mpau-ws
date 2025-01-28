@@ -1,24 +1,18 @@
-package fr.mpau_ws.model;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+package fr.mpau_ws.bean;
 
 /**
  * Classe modèle des requêtes timestamp pour utilisation du timer
  * 
  * @author Jonathan
- * @version 1.0
+ * @version 1.2 (22/01/2025)
  * @since 13/11/2017
  */
-
-@XmlRootElement(name = "timestamp")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class RequestTimestamp {
 
 	/**
 	 * Attributs
 	 */
+
 	long timestamp;
 
 	/**
@@ -31,8 +25,9 @@ public class RequestTimestamp {
 	}
 
 	/**
-	 * Getters / Setters
+	 * Getter
 	 */
+
 	public long getTimestamp() {
 		return timestamp;
 	}

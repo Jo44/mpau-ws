@@ -2,37 +2,36 @@ package fr.mpau_ws.service;
 
 import java.util.List;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.Intervention;
 import fr.mpau_ws.controler.InterventionController;
 import fr.mpau_ws.controler.UserController;
-import fr.mpau_ws.model.Intervention;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Classe service des interventions
  * 
  * @author Jonathan
- * @version 1.5 (14/02/2018)
+ * @version 1.6 (22/01/2025)
  * @since 11/11/2017
  */
-
-@Path("/interventions")
+@Path("/intervention")
 public class InterventionService {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(InterventionService.class);
 	private InterventionController interCtrl = new InterventionController();
 	private UserController userCtrl = new UserController();
@@ -55,7 +54,7 @@ public class InterventionService {
 	 * @param authString
 	 * @return List<Intervention>
 	 */
-	// URI: /interventions/list/{next}/from/{interId}/by/{nbInter}
+	// URI: /intervention/list/{next}/from/{interId}/by/{nbInter}
 	@GET
 	@Path("/list/{next}/from/{interId}/by/{nbInter}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -81,7 +80,7 @@ public class InterventionService {
 	 * @param authString
 	 * @return Intervention
 	 */
-	// URI: /interventions/{interId}
+	// URI: /intervention/{interId}
 	@GET
 	@Path("/{interId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -104,7 +103,7 @@ public class InterventionService {
 	 * @param inter
 	 * @return Intervention
 	 */
-	// URI: /interventions
+	// URI: /intervention
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Intervention serviceAddIntervention(@HeaderParam("authorization") String authString, Intervention inter) {
@@ -127,7 +126,7 @@ public class InterventionService {
 	 * @param inter
 	 * @return Intervention
 	 */
-	// URI: /interventions/{interId}
+	// URI: /intervention/{interId}
 	@PUT
 	@Path("/{interId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -152,7 +151,7 @@ public class InterventionService {
 	 * @param authString
 	 * @return Intervention
 	 */
-	// URI: /interventions/{interId}
+	// URI: /intervention/{interId}
 	@DELETE
 	@Path("/{interId}")
 	@Produces(MediaType.APPLICATION_JSON)

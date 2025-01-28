@@ -1,24 +1,18 @@
-package fr.mpau_ws.model;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+package fr.mpau_ws.bean;
 
 /**
  * Classe modèle du mode du timer
  * 
  * @author Jonathan
- * @version 1.1 (23/11/2017)
+ * @version 1.2 (22/01/2025)
  * @since 20/11/2017
  */
-
-@XmlRootElement(name = "timerMode")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class TimerMode {
 
 	/**
 	 * Attributs
 	 */
+
 	private String mode;
 	private long lastTimestamp;
 
@@ -33,8 +27,9 @@ public class TimerMode {
 	}
 
 	/**
-	 * Getters / Setters
+	 * Getters
 	 */
+
 	public String getMode() {
 		return mode;
 	}

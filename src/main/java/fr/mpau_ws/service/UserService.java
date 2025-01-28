@@ -1,33 +1,32 @@
 package fr.mpau_ws.service;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import fr.mpau_ws.bean.User;
 import fr.mpau_ws.controler.UserController;
-import fr.mpau_ws.model.User;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Classe service des utilisateurs
  * 
  * @author Jonathan
- * @version 1.3 (14/02/2018)
+ * @version 1.4 (22/01/2025)
  * @since 11/11/2017
  */
-
 @Path("/user")
 public class UserService {
 
 	/**
 	 * Attributs
 	 */
+
 	private static final Logger logger = LogManager.getLogger(UserService.class);
 	private UserController userCtrl = new UserController();
 
